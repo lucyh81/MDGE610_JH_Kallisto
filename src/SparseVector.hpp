@@ -18,7 +18,7 @@ public:
   Roaring remove(size_t i);
   void clear();
   
-  const Roaring& getIndices() const; // Get all transcript IDs stored in this object	
+  const Roaring& getIndices() const; // Get all transcript IDs stored in this object
   // Populates elems with (index, element) tuples
   void getElements(std::vector<std::pair<uint32_t, Roaring> > &elems) const;
   Roaring get(size_t i, bool getOne=false) const;
