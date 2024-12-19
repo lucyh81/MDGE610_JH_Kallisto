@@ -50,7 +50,7 @@ void plaintext_writer(
     << "length" << "\t"
     << "eff_length" << "\t"
     << "est_counts" << "\t"
-    << "tpm" << std::endl;
+    << "tpm" << "\n";
 
   for (auto i = 0; i < alpha.size(); ++i) {
     of << targ_ids[i] << '\t'
@@ -58,7 +58,7 @@ void plaintext_writer(
       << lens[i] << '\t'
       << eff_lens[i] << '\t'
       << alpha[i] << '\t'
-      << tpm[i] << std::endl;
+      << tpm[i] << '\n';
   }
 
   of.close();
@@ -175,25 +175,25 @@ void plaintext_aux(
   ss << std::fixed << std::setprecision(1) << p_aln;
   p_aln_s = ss.str();
 
-  of << "{" << std::endl <<
-    to_json("n_targets", n_targs, false) << std::endl <<
-    to_json("n_bootstraps", n_bootstrap, false) << std::endl <<
-    to_json("n_processed", n_processed, false) << std::endl <<
-    to_json("n_pseudoaligned", n_pseudoaligned, false) << std::endl <<
-    to_json("n_unique", n_unique, false) << std::endl <<
-    to_json("p_pseudoaligned", p_aln_s, false) << std::endl <<
-    to_json("p_unique", p_uniq_s, false) << std::endl <<
-    to_json("kallisto_version", version, true) << std::endl <<
-    to_json("index_version", index_v, false) << std::endl <<
-    to_json("k-mer length", index_k, false) << std::endl <<
-    to_json("start_time", start_time, true) << std::endl;
+  of << "{" << "\n" <<
+    to_json("n_targets", n_targs, false) << "\n" <<
+    to_json("n_bootstraps", n_bootstrap, false) << "\n" <<
+    to_json("n_processed", n_processed, false) << "\n" <<
+    to_json("n_pseudoaligned", n_pseudoaligned, false) << "\n" <<
+    to_json("n_unique", n_unique, false) << "\n" <<
+    to_json("p_pseudoaligned", p_aln_s, false) << "\n" <<
+    to_json("p_unique", p_uniq_s, false) << "\n" <<
+    to_json("kallisto_version", version, true) << "\n" <<
+    to_json("index_version", index_v, false) << "\n" <<
+    to_json("k-mer length", index_k, false) << "\n" <<
+    to_json("start_time", start_time, true) << "\n";
     if (cardinality_clashes != "") {
-    of << to_json("call", call, true) << std::endl;
-    of <<  to_json("n_frame_clashes", cardinality_clashes, false, false) << std::endl;
+    of << to_json("call", call, true) << "\n";
+    of <<  to_json("n_frame_clashes", cardinality_clashes, false, false) << "\n";
     } else {
-    of << to_json("call", call, true, false) << std::endl;
+    of << to_json("call", call, true, false) << "\n";
     }
-    of << "}" << std::endl;
+    of << "}" << "\n";
 
   of.close();
 }

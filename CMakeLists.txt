@@ -48,6 +48,10 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif()
 
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
+endif()
+
 if(${CMAKE_VERSION} VERSION_LESS 3.1)
     # CMake versions before 3.1 do not understand CMAKE_CXX_STANDARD
     # remove this block once CMake >=3.1 has fixated in the ecosystem

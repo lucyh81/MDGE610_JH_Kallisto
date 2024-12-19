@@ -283,7 +283,7 @@ void KmerIndex::BuildTranscripts(const ProgramOptions& opt, std::ofstream& out) 
         // Translate amino acid (AA) sequence to comma-free code (cfc)
         std::string str = AA_to_cfc (seq->seq.s);
 
-        of << ">" << num_trans++ << "\n" << str << std::endl;
+        of << ">" << num_trans++ << '\n' << str << '\n';
         // record length of sequence after translating to cfc (will be 3x length of AA seq)
         target_lens_.push_back(str.size());
         // record sequence name
@@ -342,7 +342,7 @@ void KmerIndex::BuildTranscripts(const ProgramOptions& opt, std::ofstream& out) 
           for (j = str.size()-1; j >= 0 && str[j] == 'A'; j--) {}
           str = str.substr(0,j+1);
         }
-        of << ">" << num_trans++ << "\n" << str << std::endl;
+        of << ">" << num_trans++ << "\n" << str << "\n";
 
         target_lens_.push_back(seq->seq.l);
         std::string name(seq->name.s);
@@ -458,7 +458,7 @@ void KmerIndex::BuildDistinguishingGraph(const ProgramOptions& opt, std::ofstrea
       // Begin Shading
       if (!variant.empty()) of << "_shade_" << variant;
       // End Shading
-      of << "\n" << str << std::endl;
+      of << "\n" << str << "\n";
       num_seqs++;
     }
     gzclose(fp);
@@ -686,7 +686,9 @@ void KmerIndex::DListFlankingKmers(const ProgramOptions& opt, const std::string&
   auto kmers_special = kmers; // copy; kmers_special will be the ones we store as-is (i.e. not flanking); these are the entries where the FASTA name header is not populated
 
   std::cerr << "[build] extracting D-list k-mers from";
-  for (std::string s : opt.d_list) std::cerr << " \"" << s << "\""; 
+  for (std::string s : opt.d_list) {
+    std::cerr << " \"" << s << "\""; 
+  }
   std::cerr << std::endl;
   
   auto isInvalidKmer = [](const char* s, const int k) {
@@ -815,17 +817,17 @@ void KmerIndex::DListFlankingKmers(const ProgramOptions& opt, const std::string&
         // Translate to comma-free code
         cfc_str_f1 = nn_to_cfc(sequence, seqlen1);
         // Write translated sequence to temporary file
-        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f1 << std::endl;
+        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f1 << "\n";
 
         // Forward frame 2
         const char * seq2 = sequence+1;
         cfc_str_f2 = nn_to_cfc(seq2, seqlen1 - 1);
-        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f2 << std::endl;
+        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f2 << "\n";
 
         // Forward frame 3
         const char * seq3 = sequence+2;
         cfc_str_f3 = nn_to_cfc(seq3, seqlen1 - 2);
-        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f3 << std::endl;
+        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f3 << "\n";
 
         // Get reverse complement of sequence
         // const char * to string
@@ -837,17 +839,17 @@ void KmerIndex::DListFlankingKmers(const ProgramOptions& opt, const std::string&
 
         // Rev comp frame 1
         cfc_str_f4 = nn_to_cfc(com_seq_char, seqlen1);
-        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f4 << std::endl;
+        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f4 << "\n";
 
         // Rev comp frame 2
         const char * seq5 = com_seq_char+1;
         cfc_str_f5 = nn_to_cfc(seq5, seqlen1-1);
-        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f5 << std::endl;
+        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f5 << "\n";
 
         // Rev comp frame 3
         const char * seq6 = com_seq_char+2;
         cfc_str_f6 = nn_to_cfc(seq6, seqlen1-2);
-        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f6 << std::endl;
+        of << ">" << (!is_special ? std::to_string(i++) : "") << "\n" << cfc_str_f6 << "\n";
       }
       gzclose(fp);
       fp = 0;
@@ -957,9 +959,9 @@ void KmerIndex::DListFlankingKmers(const ProgramOptions& opt, const std::string&
 
     outfile << ">"
             << tx_name
-            << std::endl
+            << '\n'
             << kmer.toString()
-            << std::endl;
+            << '\n';
 
     ++unique_flanking_kmers;
 
@@ -985,9 +987,9 @@ void KmerIndex::DListFlankingKmers(const ProgramOptions& opt, const std::string&
     //target_lens_.push_back(k);
     outfile << ">"
             << tx_name
-            << std::endl
+            << '\n'
             << kmer.toString()
-            << std::endl;
+            << '\n';
     ++other_dlist_kmers;
   }
   for (const auto& kmer : already_in_graph) {
