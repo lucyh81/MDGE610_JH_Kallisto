@@ -1311,12 +1311,14 @@ bool CheckOptionsBus(ProgramOptions &opt) {
       busopt.umi.push_back(BUSOptionSubstr(0, 16, 26));  // first file [16:26]
       busopt.bc.push_back(BUSOptionSubstr(0, 0, 16));
       strand = ProgramOptions::StrandType::FR;
+      opt.strand_specific = true;
     } else if (opt.technology == "10XV3") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(1, 0, 0));
       busopt.umi.push_back(BUSOptionSubstr(0, 16, 28));
       busopt.bc.push_back(BUSOptionSubstr(0, 0, 16));
       strand = ProgramOptions::StrandType::FR;
+      opt.strand_specific = true;
     } else if (opt.technology == "PARSEV3") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(0, 0, 0));
@@ -1325,30 +1327,37 @@ bool CheckOptionsBus(ProgramOptions &opt) {
       busopt.bc.push_back(BUSOptionSubstr(1, 50, 58));
       busopt.umi.push_back(BUSOptionSubstr(1, 0, 10));
       strand = ProgramOptions::StrandType::FR;
+      opt.strand_specific = true;
     } else if (opt.technology == "MATQSEQ") {
       busopt.nfiles = 1;
       busopt.bc.push_back(BUSOptionSubstr(0, 0, 8));
       busopt.seq.push_back(BUSOptionSubstr(0, 8, 0));
       busopt.umi.push_back(BUSOptionSubstr(-1, -1, -1));
+      strand = ProgramOptions::StrandType::None;
+      opt.strand_specific = false;
     } else if (opt.technology == "PETRISEQ") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(1, 0, 17));
       busopt.bc.push_back(BUSOptionSubstr(0, 7, 14));
       busopt.bc.push_back(BUSOptionSubstr(0, 29, 36));
       busopt.bc.push_back(BUSOptionSubstr(0, 50, 58));
-      busopt.umi.push_back(BUSOptionSubstr(0, 0, 7));    
+      busopt.umi.push_back(BUSOptionSubstr(0, 0, 7));   
+      strand = ProgramOptions::StrandType::None;
+      opt.strand_specific = false;
     } else if (opt.technology == "VISIUM") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(1, 0, 0));
       busopt.umi.push_back(BUSOptionSubstr(0, 16, 28));
       busopt.bc.push_back(BUSOptionSubstr(0, 0, 16));
       strand = ProgramOptions::StrandType::FR;
+      opt.strand_specific = true;
     } else if (opt.technology == "10XV1") {
       busopt.nfiles = 3;
       busopt.seq.push_back(BUSOptionSubstr(2, 0, 0));
       busopt.umi.push_back(BUSOptionSubstr(1, 0, 10));
       busopt.bc.push_back(BUSOptionSubstr(0, 0, 14));
       strand = ProgramOptions::StrandType::FR;
+      opt.strand_specific = true;
     } else if (opt.technology == "SURECELL") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(1, 0, 0));
@@ -1357,11 +1366,13 @@ bool CheckOptionsBus(ProgramOptions &opt) {
       busopt.bc.push_back(BUSOptionSubstr(0, 21, 27));
       busopt.bc.push_back(BUSOptionSubstr(0, 42, 48));
       strand = ProgramOptions::StrandType::FR;
+      opt.strand_specific = true;
     } else if (opt.technology == "DROPSEQ") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(1, 0, 0));
       busopt.umi.push_back(BUSOptionSubstr(0, 12, 20));
       busopt.bc.push_back(BUSOptionSubstr(0, 0, 12));
+      opt.strand_specific = true;
     } else if (opt.technology == "INDROPSV1") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(1, 0, 0));
@@ -1400,6 +1411,7 @@ bool CheckOptionsBus(ProgramOptions &opt) {
       busopt.bc.push_back(BUSOptionSubstr(1, 48, 56));
       busopt.bc.push_back(BUSOptionSubstr(1, 78, 86));
       strand = ProgramOptions::StrandType::FR;
+      opt.strand_specific = true;
     } else if (opt.technology == "STORM-SEQ") {
       busopt.nfiles = 2;
       busopt.bc.push_back(BUSOptionSubstr(-1, -1, -1));
@@ -1408,6 +1420,7 @@ bool CheckOptionsBus(ProgramOptions &opt) {
       busopt.seq.push_back(BUSOptionSubstr(1, 14, 0));
       busopt.paired = true;
       strand = ProgramOptions::StrandType::RF;
+      opt.strand_specific = true;
     } else if (opt.technology == "SCRBSEQ") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(1, 0, 0));
@@ -1422,6 +1435,7 @@ bool CheckOptionsBus(ProgramOptions &opt) {
       busopt.bc.push_back(BUSOptionSubstr(1, 0, 0));
       busopt.paired = true;
       strand = ProgramOptions::StrandType::FR;
+      opt.strand_specific = true;
     } else if (opt.technology == "SMARTSEQ2") {
       busopt.nfiles = 3;
       busopt.seq.push_back(BUSOptionSubstr(2, 0, 0));
@@ -1446,12 +1460,14 @@ bool CheckOptionsBus(ProgramOptions &opt) {
           BUSOptionSubstr(0, 9 + 12 + 9 + 13 + 9, 9 + 12 + 9 + 13 + 9 + 8));  // umi
       busopt.seq.push_back(BUSOptionSubstr(1, 0, 0));
       strand = ProgramOptions::StrandType::FR;
+      opt.strand_specific = true;
     } else if (opt.technology == "VASA-SEQ") {
       busopt.nfiles = 1;
       busopt.bc.push_back(BUSOptionSubstr(0, 6, 14));
       busopt.umi.push_back(BUSOptionSubstr(0, 0, 6));
       busopt.seq.push_back(BUSOptionSubstr(0, 14, 0));
       strand = ProgramOptions::StrandType::FR;
+      opt.strand_specific = true;
     } else {
       std::vector<int> files;
       std::vector<BUSOptionSubstr> values;
