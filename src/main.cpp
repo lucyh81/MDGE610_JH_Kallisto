@@ -2868,7 +2868,7 @@ int main(int argc, char *argv[]) {
           em.set_priors(priors);
           priors.clear();
         }
-        em.run(1000, 1000, true, opt.bias);
+        em.run(100, 100, true, opt.bias);
 
         std::string call = argv_to_string(argc, argv);
 
@@ -3216,7 +3216,7 @@ int main(int argc, char *argv[]) {
           if (opt.priors != "") {
             em.set_priors(priors);
           }
-          em.run(1000, 1000, false, false);
+          em.run(100, 100, false, false);
 
           if (isMatrixFile) {  // Update abundances matrix
             auto &ab_m = Abundance_mat[id];
