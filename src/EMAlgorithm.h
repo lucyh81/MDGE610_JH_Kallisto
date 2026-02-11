@@ -92,13 +92,13 @@ struct EMAlgorithm {
     }
   }
 
-  void run(size_t n_iter = 10000, size_t min_rounds=50, bool verbose = true, bool recomputeEffLen = true) {
+  void run(size_t n_iter =10000, size_t min_rounds=50, bool verbose = true, bool recomputeEffLen = true) {
     std::vector<double> next_alpha(alpha_.size(), 0.0);
 
     assert(weight_map_.size() <= counts_.size());
 
     double denom;
-    const double alpha_limit = 1e-7;
+    const double alpha_limit = 1e-15;
     const double alpha_change_limit = 1e-2;
     const double alpha_change = 1e-2;
     bool finalRound = false;
@@ -181,7 +181,7 @@ struct EMAlgorithm {
         //if (stopEM && next_alpha[ec] >= alpha_limit) {
 
           /* double reldiff = abs(next_alpha[ec]-alpha_[ec]) / next_alpha[ec];
-          if (reldiff >= alpha_change) {
+	          if (reldiff >= alpha_change) {
             stopEM = false;
             }*/
         //}
