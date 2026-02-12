@@ -1,0 +1,227 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{MDGE 610}
+\lhead{Session 5 Assignment}
+\rfoot{Page \thepage}
+
+\title{\textbf{Assignment: Investigating the EM Algorithm in kallisto}}
+\author{MDGE 610: Foundations of Bioinformatics}
+\date{Due: Two weeks from assignment date}
+
+\begin{document}
+
+\maketitle
+
+\section*{Overview}
+
+In this assignment, you will investigate the Expectation-Maximization (EM) algorithm as implemented in kallisto, a widely-used tool for RNA-seq transcript quantification. You will read about the EM algorithm, examine how kallisto applies it, and conduct empirical experiments to evaluate the convergence criteria used in the software.
+
+This assignment has both conceptual and practical components. You will need to:
+\begin{itemize}
+    \item Read and understand the EM algorithm
+    \item Examine kallisto's source code
+    \item Modify, compile, and run kallisto with different settings
+    \item Analyze results and draw conclusions
+\end{itemize}
+
+\section*{Background}
+
+\subsection*{The Transcript Quantification Problem}
+
+RNA sequencing produces millions of short reads that originate from transcribed RNA molecules. A fundamental challenge is estimating how many RNA molecules came from each transcript (gene isoform) in the original sample. This is complicated by the fact that many reads are \emph{multi-mapping}---they are compatible with multiple transcripts due to sequence similarity among gene family members, splice isoforms, and repetitive elements.
+
+\subsection*{kallisto's Approach}
+
+kallisto \cite{bray2016near} uses \emph{pseudoalignment} to rapidly determine which transcripts each read could have originated from, then applies the EM algorithm to estimate transcript abundances. The key insight is that reads can be grouped into \emph{equivalence classes} based on which transcripts they are compatible with, and the EM algorithm can work with these equivalence class counts rather than individual reads.
+
+\subsection*{The EM Algorithm}
+
+The Expectation-Maximization algorithm \cite{dempster1977maximum} is a general method for maximum likelihood estimation when some data are missing or unobserved. In transcript quantification, we observe which transcripts each read \emph{could} have come from, but not which transcript it \emph{actually} came from. The EM algorithm iteratively:
+\begin{enumerate}
+    \item \textbf{E-step}: Estimates the probability that each read came from each compatible transcript, given current abundance estimates
+    \item \textbf{M-step}: Updates abundance estimates based on these probabilistic assignments
+\end{enumerate}
+
+The algorithm is guaranteed to increase (or maintain) the likelihood at each iteration, eventually converging to a local maximum.
+
+\subsection*{Required Reading}
+
+\begin{itemize}
+    \item Dempster, A.P., Laird, N.M., and Rubin, D.B. (1977). Maximum likelihood from incomplete data via the EM algorithm. \emph{Journal of the Royal Statistical Society: Series B}, 39(1):1--38. \cite{dempster1977maximum}
+\end{itemize}
+
+This classic paper introduces the EM algorithm and establishes its theoretical properties. Focus on understanding the general framework (Sections 1--3) rather than all the specific applications.
+
+\subsection*{Approaching the DLR Paper}
+
+The Dempster-Laird-Rubin paper is a foundational work in statistics, but its mathematical notation and generality can be challenging. You are encouraged to use modern AI tools to help you navigate the material. A recommended approach:
+
+\begin{enumerate}
+    \item Upload the DLR paper to a tool like Google's NotebookLM to generate an initial summary and enable interactive Q\&A with the document.
+    \item Use a frontier LLM (e.g., Claude, ChatGPT, Gemini) to help ``translate'' the mathematical notation in Section 2 (General Properties) into plain English.
+    \item \textbf{Critical step:} Verify the LLM's explanations by cross-referencing specific equations in the paper. Do not blindly trust the output---use it to unlock the primary text, not replace it.
+\end{enumerate}
+
+The goal is understanding, not just getting answers. If an LLM explains something, make sure you can trace that explanation back to the paper itself.
+
+\section*{Provided Data}
+
+You are provided with simulated RNA-seq data from the human protein-coding transcriptome. Using simulated data allows us to know the ``ground truth'' abundances and evaluate estimation accuracy.
+
+\subsection*{Files}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{File} & \textbf{Description} \\
+\midrule
+\texttt{gencode.v44.kidx} & Pre-built kallisto index (GENCODE v44 protein-coding transcripts) \\
+\texttt{sim\_reads\_1.fastq.gz} & Simulated paired-end reads (read 1) \\
+\texttt{sim\_reads\_2.fastq.gz} & Simulated paired-end reads (read 2) \\
+\texttt{sim\_true\_counts.txt} & Ground truth transcript counts \\
+\bottomrule
+\end{tabular}
+\caption{Provided data files for the assignment.}
+\end{table}
+
+\subsection*{Data Characteristics}
+
+\begin{itemize}
+    \item \textbf{Reference}: GENCODE v44 human protein-coding transcriptome (110,962 transcripts)
+    \item \textbf{Read pairs}: 1,000,000
+    \item \textbf{Read length}: 75 bp paired-end
+    \item \textbf{Fragment length}: Mean 250 bp, SD 50 bp
+    \item \textbf{Sequencing error}: 1\% per-base
+\end{itemize}
+
+The ground truth file (\texttt{sim\_true\_counts.txt}) is tab-delimited with columns \texttt{transcript\_id} and \texttt{true\_counts}.
+
+\section*{Assignment Questions}
+
+Prepare a written report addressing the following questions. Your report should be clear, well-organized, and include evidence (figures, tables, or specific observations) supporting your conclusions.
+
+\subsection*{Part 1: Conceptual Understanding}
+
+\begin{enumerate}[label=\textbf{(\arabic*)}]
+
+\item \textbf{The EM Algorithm.} What is the EM algorithm? Describe how it works in your own words:
+\begin{itemize}
+    \item What objective function does it maximize?
+    \item What are the E-step and M-step, conceptually?
+    \item What constitutes the ``missing data'' in kallisto's application of EM?
+\end{itemize}
+
+\item \textbf{kallisto's Objective Function.} Examine the kallisto paper and/or source code to understand the specific likelihood function being maximized.
+\begin{itemize}
+    \item What is the mathematical form of the objective function?
+    \item How does kallisto's EM implementation maximize it?
+    \item What convergence criteria does kallisto use to decide when to stop iterating? Where are these specified in the code?
+    \item How might these criteria be justified?
+\end{itemize}
+
+\item \textbf{Local vs.\ Global Maxima.} The EM algorithm is guaranteed to find a local maximum, but not necessarily the global maximum. Different starting points could, in principle, lead to different solutions.
+\begin{itemize}
+    \item Examine how kallisto initializes its abundance estimates.
+    \item Do you think initialization matters for this problem? Why or why not?
+    \item \emph{Hint}: Consider what fraction of reads map to a single transcript (uniquely) versus multiple transcripts (ambiguously).
+\end{itemize}
+
+\end{enumerate}
+
+\subsection*{Part 2: Empirical Investigation}
+
+\begin{enumerate}[label=\textbf{(\arabic*)}, resume]
+
+\item \textbf{Testing Convergence Criteria.} You will empirically test how kallisto's EM convergence criteria affect estimation accuracy.
+
+\textbf{Setup:}
+\begin{itemize}
+    \item Obtain the kallisto source code from \url{https://github.com/pachterlab/kallisto}
+    \item Create a git repository for your work. Make an initial commit containing the original, unmodified source code.
+    \item Compile kallisto following the instructions in the repository.
+\end{itemize}
+
+\textbf{Experiments:}
+\begin{itemize}
+    \item Modify the kallisto source code to vary the EM convergence behavior (e.g., number of iterations, convergence threshold, or other relevant parameters).
+    \item For each modification, commit your changes to git with a descriptive commit message.
+    \item Run kallisto on the provided simulated data and compare the estimated abundances to the ground truth.
+    \item You may choose how to assess accuracy (e.g., correlation, relative error, or other metrics you find appropriate).
+\end{itemize}
+
+\textbf{Write-up:}
+\begin{itemize}
+    \item Describe what modifications you made and why.
+    \item Present your results clearly (tables and/or figures).
+    \item Interpret your findings: Are the convergence criteria used in the kallisto paper adequate? What evidence supports your conclusion?
+\end{itemize}
+
+\end{enumerate}
+
+\section*{Deliverables}
+
+\begin{enumerate}
+    \item \textbf{Written report} (PDF) addressing all four questions. There is no strict page limit, but aim for clarity and concision. Include relevant figures and tables.
+
+    \textbf{Bonus opportunity:} If you submit your report as a Jupyter notebook (or equivalent computational notebook such as R Markdown or Quarto) with executable code that reproduces your analysis, you will earn one bonus point. The notebook should be well-documented and run without errors.
+
+    \item \textbf{Git repository} containing:
+    \begin{itemize}
+        \item Initial commit with original kallisto source
+        \item Subsequent commits documenting each modification you tested
+        \item Any analysis scripts you wrote
+    \end{itemize}
+    You may submit this as a link to a GitHub/GitLab repository or as a zipped archive of the repository (including the \texttt{.git} directory).
+\end{enumerate}
+
+\section*{Evaluation Criteria}
+
+Your report will be evaluated on:
+\begin{itemize}
+    \item \textbf{Understanding}: Do you demonstrate a clear understanding of the EM algorithm and its application in kallisto?
+    \item \textbf{Rigor}: Are your experiments well-designed? Do you test a reasonable range of conditions?
+    \item \textbf{Analysis}: Do you interpret your results thoughtfully? Do you consider alternative explanations?
+    \item \textbf{Reproducibility}: Can your experiments be reproduced from your git repository and description?
+    \item \textbf{Communication}: Is your report clear, well-organized, and appropriately concise?
+\end{itemize}
+
+\section*{Tips}
+
+\begin{itemize}
+    \item Start early. Compiling software from source and troubleshooting build issues takes time.
+    \item Use \texttt{git diff} to review your changes before committing.
+    \item If you get stuck on the code, focus on understanding what you \emph{can} find and document your process.
+    \item There is no single ``right answer'' to the final question. A well-reasoned conclusion supported by evidence is what matters.
+\end{itemize}
+
+\section*{Office Hours and Q\&A}
+
+Class time will be allocated for questions and working on the assignment. Come prepared with specific questions or issues you've encountered.
+
+\bibliographystyle{plain}
+\begin{thebibliography}{9}
+
+\bibitem{bray2016near}
+Bray, N.L., Pimentel, H., Melsted, P., and Pachter, L. (2016).
+Near-optimal probabilistic RNA-seq quantification.
+\emph{Nature Biotechnology}, 34(5):525--527.
+
+\bibitem{dempster1977maximum}
+Dempster, A.P., Laird, N.M., and Rubin, D.B. (1977).
+Maximum likelihood from incomplete data via the EM algorithm.
+\emph{Journal of the Royal Statistical Society: Series B (Methodological)}, 39(1):1--38.
+
+\end{thebibliography}
+
+\end{document}

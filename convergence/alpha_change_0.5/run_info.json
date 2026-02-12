@@ -1,0 +1,14 @@
+{
+	"n_targets": 110962,
+	"n_bootstraps": 0,
+	"n_processed": 1000000,
+	"n_pseudoaligned": 992724,
+	"n_unique": 229931,
+	"p_pseudoaligned": 99.3,
+	"p_unique": 23.0,
+	"kallisto_version": "0.52.0",
+	"index_version": 13,
+	"k-mer length": 31,
+	"start_time": "Wed Feb 11 10:36:27 2026",
+	"call": "/home/lucy.hyun/mdge610/kallisto/build/src/kallisto quant -i gencode.v44.kidx -o /home/lucy.hyun/mdge610/convergence/alpha_change_0.5/ sim_reads_1.fastq.gz sim_reads_2.fastq.gz"
+}
